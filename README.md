@@ -12,7 +12,7 @@ Welcome to **Fruit Memory Game**—a fun, interactive, and visually delightful g
 
 ## 📸 Preview
 
-![Game Preview](https://fruit-memory-game.vercel.app/)
+[Game Preview](https://fruit-memory-game.vercel.app/)
 
 ## 🔧 Built With
 
