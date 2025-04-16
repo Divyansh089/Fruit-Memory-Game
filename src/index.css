@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Prevent scrolling */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Scoreboard top‑left container */
+.scoreboard-container {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 50;
+}
+
+/* Basket bottom‑right container */
+.basket-container {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 14rem;
+  height: 14rem;
+  pointer-events: none;
+  z-index: 40;
+}
+.basket-container img {
+  position: absolute;
+  width: 2.5rem;
+  height: 2.5rem;
+  transition: transform 0.3s ease;
+}
+
+.card-face.front {
+    background: url('/images/card-back.png') center/cover no-repeat;
+  }
+  
+/* Custom animations that work with Tailwind */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+  
+  @keyframes flyAway {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--tx), var(--ty)) rotate(var(--rotate)) scale(var(--scale));
+      opacity: 0;
+    }
+  }
+  
+  @keyframes bounceIn {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    70% {
+      transform: scale(1.05);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  .animate-float {
+    animation: float 3s infinite ease-in-out;
+  }
+  
+  .animate-fly-away {
+    animation: flyAway 2s forwards ease-out;
+    animation-delay: var(--delay, 0s);
+  }
+  
+  .animate-bounce-in {
+    animation: bounceIn 0.5s;
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  
+  .duration-600 {
+    transition-duration: 600ms;
+  }
+  
+  /* Splash animation for cards */
+  .splash .card-inner {
+    transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--rot, 0deg));
+  }
+/* Card flip 3D & splash... (leave your existing CSS for .card-inner, .splash, etc.) */
