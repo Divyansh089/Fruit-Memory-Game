@@ -33,6 +33,7 @@ export default function Basket({ items, showAnimation }) {
             bottom: "1.5rem",
             transform: "translateX(-50%)",
             clipPath: "ellipse(60% 55% at 50% 60%)",
+            WebkitClipPath: "ellipse(60% 55% at 50% 60%)",
             overflow: "hidden",
           }}
         >
@@ -56,15 +57,17 @@ export default function Basket({ items, showAnimation }) {
         </div>
       )}
 
-      {/* 2b) Front rim overlay to hide upper parts of the fruit */}
+      {/* 2b) Front rim overlay so fruit sits behind the lip */}
       {!showAnimation && (
         <div
           className="absolute inset-0 z-30"
           style={{
-            clipPath: "polygon(0% 55%, 100% 55%, 100% 100%, 0% 100%)",
+            clipPath: "polygon(0% 48%, 100% 48%, 100% 68%, 0% 68%)",
+            WebkitClipPath: "polygon(0% 48%, 100% 48%, 100% 68%, 0% 68%)",
             backgroundImage: "url('/images/basket.png')",
             backgroundSize: "100% 100%",
             backgroundRepeat: "no-repeat",
+            backgroundPosition: "center bottom",
           }}
           aria-hidden="true"
         />
