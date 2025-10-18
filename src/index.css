@@ -111,3 +111,16 @@ html, body, #root {
     transform: translate(var(--tx, 0), var(--ty, 0)) rotate(var(--rot, 0deg));
   }
 /* Card flip 3D & splash... (leave your existing CSS for .card-inner, .splash, etc.) */
+
+/* Glass panel helper */
+.glass-panel {
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06));
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Nice gradient background fallback if Tailwind class not applied */
+body {
+  background: radial-gradient(1200px circle at 10% 0%, #6d28d9, transparent 40%),
+              radial-gradient(1000px circle at 100% 10%, #3730a3, transparent 35%),
+              linear-gradient(180deg, #1f2937, #0f172a);
+}

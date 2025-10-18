@@ -1,8 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Board from "./components/Board"
-import Scoreboard from "./components/Scoreboard"
 import Basket from "./components/Basket"
 
 const fruitImages = {
@@ -18,7 +17,6 @@ export default function MemoryGame() {
   const gridSize = 4 // 4×4 grid
   const totalCards = gridSize ** 2 // 16 cards
   const pairCount = totalCards / 2 // 8 pairs
-  const allFruits = Object.keys(fruitImages)
 
   const [cards, setCards] = useState([])
   const [flipped, setFlipped] = useState([])
@@ -31,7 +29,9 @@ export default function MemoryGame() {
   const [splash, setSplash] = useState(false)
   const [showFruitAnimation, setShowFruitAnimation] = useState(false)
 
-  const initializeGame = () => {
+  // FIX: Move allFruits inside useCallback so it's not a changing dependency
+  const initializeGame = useCallback(() => {
+    const allFruits = Object.keys(fruitImages)
     // 1) pick exactly 8 fruits (with repeat if needed) at random
     const pool = [...allFruits].sort(() => Math.random() - 0.5)
     const fruitsToUse = []
@@ -41,16 +41,13 @@ export default function MemoryGame() {
       }
       fruitsToUse.push(pool.pop())
     }
-
     // 2) build deck: two cards per fruit
     const deck = fruitsToUse.flatMap((fruit, index) => [
       { id: `${fruit}-A-${index}`, fruit },
       { id: `${fruit}-B-${index}`, fruit },
     ])
-
     // 3) shuffle
     deck.sort(() => Math.random() - 0.5)
-
     // reset all state
     setCards(deck)
     setFlipped([])
@@ -62,11 +59,11 @@ export default function MemoryGame() {
     setBasket([])
     setSplash(false)
     setShowFruitAnimation(false)
-  }
+  }, [pairCount])
 
   useEffect(() => {
     initializeGame()
-  }, [])
+  }, [initializeGame])
 
   const checkMatch = (secondIndex) => {
     const [firstIndex] = flipped
@@ -76,7 +73,10 @@ export default function MemoryGame() {
       // correct match
       setSolved((s) => [...s, firstIndex, secondIndex])
       setMatches((m) => m + 1)
-      setBasket((b) => [...b, { fruit: cards[firstIndex].fruit, key: `${secondIndex}-${Date.now()}` }])
+      setBasket((b) => [
+        ...b,
+        { fruit: cards[firstIndex].fruit, key: `${secondIndex}-${Date.now()}` },
+      ])
       setFlipped([])
       setDisabled(false)
     } else {
@@ -119,40 +119,59 @@ export default function MemoryGame() {
   }, [solved, cards])
 
   return (
-    <div className="min-h-screen w-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-700 via-indigo-700 to-slate-900 text-white">
-      <div className="min-h-screen max-w-5xl mx-auto px-4 sm:px-6 py-6 flex flex-col items-center justify-start relative">
-        <Scoreboard
-          moves={moves}
-          matches={matches}
-          totalPairs={pairCount}
-          onReset={initializeGame}
-        />
-
-        <main className="mt-4 sm:mt-8 w-full flex flex-col items-center">
-          <Board
-            cards={cards}
-            gridSize={gridSize}
-            handleClick={handleClick}
-            isFlipped={(i) => flipped.includes(i) || solved.includes(i)}
-            isMatched={(i) => solved.includes(i)}
-            fruitImages={fruitImages}
-            splash={splash}
-          />
-
-          {!won && (
-            <button
-              onClick={initializeGame}
-              className="mt-5 inline-flex items-center gap-2 px-6 py-2 rounded-lg bg-white/90 text-purple-700 font-semibold shadow hover:bg-white"
-            >
-              Reset Game
-            </button>
-          )}
-        </main>
-
-        <footer className="mt-8 text-white/70 text-xs">
+    <div className="min-h-screen w-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-700 via-indigo-700 to-slate-900 text-white flex">
+      {/* Left Sidebar - Scoreboard */}
+      <aside className="w-64 min-h-screen p-6 flex flex-col gap-6">
+        <div className="glass-panel rounded-2xl p-6 backdrop-blur-md border border-white/20 bg-white/10">
+          <div className="flex items-center gap-3 mb-6">
+            <img src="/images/basket.png" alt="Basket logo" className="w-10 h-10" />
+            <div>
+              <h1 className="text-white font-extrabold text-xl tracking-tight drop-shadow">Fruit Memory</h1>
+              <p className="text-white/80 text-xs">Match the pairs!</p>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="bg-emerald-500/20 border border-emerald-400/30 rounded-lg p-3">
+              <div className="text-emerald-300 text-xs font-semibold mb-1">Progress</div>
+              <div className="text-2xl font-bold text-white">{Math.round((matches / pairCount) * 100)}%</div>
+            </div>
+            
+            <div className="bg-purple-500/20 border border-purple-400/30 rounded-lg p-3">
+              <div className="text-purple-300 text-xs font-semibold mb-1">Moves</div>
+              <div className="text-2xl font-bold text-white">{moves}</div>
+            </div>
+            
+            <div className="bg-indigo-500/20 border border-indigo-400/30 rounded-lg p-3">
+              <div className="text-indigo-300 text-xs font-semibold mb-1">Matches</div>
+              <div className="text-2xl font-bold text-white">{matches} / {pairCount}</div>
+            </div>
+          </div>
+          
+          <button
+            onClick={initializeGame}
+            className="mt-6 w-full px-4 py-3 rounded-lg bg-white/90 text-purple-700 font-semibold shadow hover:bg-white transition-all"
+          >
+            Reset Game
+          </button>
+        </div>
+        
+        <footer className="mt-auto text-white/60 text-xs text-center">
           Built with ❤️ using React and Tailwind CSS
         </footer>
-      </div>
+      </aside>
+
+      {/* Main Content - Game Board */}
+      <main className="flex-1 min-h-screen p-6 flex items-center justify-center">
+        <Board
+          cards={cards}
+          handleClick={handleClick}
+          isFlipped={(i) => flipped.includes(i) || solved.includes(i)}
+          isMatched={(i) => solved.includes(i)}
+          fruitImages={fruitImages}
+          splash={splash}
+        />
+      </main>
 
       {won && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50">

@@ -74,3 +74,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 🍓 **Happy matching!** 🍏
+
+## ✨ Redesign Highlights (Oct 2025)
+
+- New gradient background and glassmorphism board
+- Upgraded cards with 3D flip, hover effects, and matched highlights
+- Header scoreboard with progress indicator and Reset
+- Win modal with bounce-in animation
+- Accessibility improvements (buttons, aria labels, focus states)
